@@ -1,0 +1,38 @@
+{
+  "name": "dsh-skill-manager",
+  "version": "0.1.0",
+  "description": "DSH 设置界面中的技能管理器：可视化管理全局/项目级 Skill（导入、编辑、删除、启用/禁用 SKILL.md 目录）",
+  "type": "module",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "client",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "skill",
+    "plugin",
+    "skill-manager"
+  ],
+  "license": "MIT",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client/client.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [],
+      "platform": "web"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1"
+  }
+}
