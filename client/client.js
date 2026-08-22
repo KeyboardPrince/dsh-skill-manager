@@ -116,36 +116,45 @@ window.__ModuleLoader__.load({
             }, '已禁用')
           ]),
 
-          // 右上角：启用/禁用切换按钮（常驻显示）
-          React.createElement('button', {
-            key: 'toggle',
-            type: 'button',
-            onClick: (e) => { e.stopPropagation(); onToggle(skill) },
-            title: disabled ? '启用' : '禁用',
+          // 右上角：启用/禁用切换开关（toggle switch）
+          React.createElement('div', {
+            key: 'toggle-wrap',
             style: {
               flexShrink: 0,
               marginLeft: 'auto',
-              marginRight: '-10px',
-              marginTop: '8px',
-              height: '20px',
-              padding: '0 14px',
-              borderRadius: '10px',
-              border: 'none',
-              background: disabled ? '#E8F5E9' : '#EEEEEE',
-              color: disabled ? '#2E7D32' : '#616161',
-              cursor: 'pointer',
-              fontSize: '11px',
-              fontWeight: 600,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              whiteSpace: 'nowrap'
+              marginRight: '-6px',
+              marginTop: '4px',
+              cursor: 'pointer'
+            },
+            onClick: (e) => { e.stopPropagation(); onToggle(skill) },
+            title: disabled ? '点击启用' : '点击禁用'
+          }, React.createElement('div', {
+            style: {
+              width: '38px',
+              height: '22px',
+              borderRadius: '11px',
+              background: disabled ? '#CCCCCC' : '#4CAF50',
+              position: 'relative',
+              transition: 'background 0.25s ease',
+              boxShadow: disabled ? 'none' : '0 1px 3px rgba(76,175,80,0.35)'
             }
-          }, disabled ? '启用' : '禁用')
+          }, React.createElement('div', {
+            style: {
+              width: '17px',
+              height: '17px',
+              borderRadius: '50%',
+              background: 'white',
+              position: 'absolute',
+              top: '2.5px',
+              left: disabled ? '2.5px' : '18.5px',
+              transition: 'left 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+            }
+          })))
         ]),
 
         // 第二行：描述（名称下方）
-        (skill.description || skill.id) && React.createElement('div', {
+        skill.description && React.createElement('div', {
           key: 'desc',
           style: {
             fontSize: '12px',
@@ -158,11 +167,7 @@ window.__ModuleLoader__.load({
             lineHeight: '1.4',
             paddingRight: '60px'
           }
-        },
-          skill.description
-            ? truncate(skill.description, 80)
-            : ('技能目录：' + skill.id)
-        ),
+        }, truncate(skill.description, 80)),
 
         // 底部：删除按钮（右下角，hover 时显示，禁用时常驻）
         React.createElement('div', {
@@ -388,6 +393,7 @@ window.__ModuleLoader__.load({
       const [deletingSkill, setDeletingSkill] = React.useState(null)
       const [importing, setImporting] = React.useState(false)
       const [toggling, setToggling] = React.useState(false)
+      const [skillsPath, setSkillsPath] = React.useState('')
 
       // 隐藏的文件夹选择器 ref
       const folderInputRef = React.useRef(null)
@@ -424,8 +430,12 @@ window.__ModuleLoader__.load({
         fetch('/skill/api/list' + qs)
           .then((r) => r.json())
           .then((data) => {
-            if (data.success) setSkills(Array.isArray(data.skills) ? data.skills : [])
-            else setSkills([])
+            if (data.success) {
+              setSkills(Array.isArray(data.skills) ? data.skills : [])
+              if (data.skillsPath) setSkillsPath(data.skillsPath)
+            } else {
+              setSkills([])
+            }
           })
           .catch(() => setSkills([]))
           .finally(() => setLoading(false))
@@ -658,10 +668,24 @@ window.__ModuleLoader__.load({
             : null
         ].filter(Boolean)),
 
+        // 技能存放路径（分隔线上方，纯展示）
+        skillsPath && React.createElement('div', {
+          key: 'path-hint',
+          style: {
+            padding: '6px 20px 1px',
+            fontSize: '10.5px',
+            color: 'var(--dsw-alias-label-quaternary, #AAA)',
+            fontFamily: 'var(--dsw-alias-font-mono, "Cascadia Code", Consolas, monospace)',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
+          }
+        }, skillsPath),
+
         // 分隔线
         React.createElement('div', {
           key: 'sep',
-          style: { height: '0.5px', background: 'var(--dsw-alias-border-l2)', margin: '12px 20px 0' }
+          style: { height: '0.5px', background: 'var(--dsw-alias-border-l2)', margin: '0 20px' }
         }),
 
         // 内容区：技能列表

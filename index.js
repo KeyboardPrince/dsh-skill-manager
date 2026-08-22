@@ -121,6 +121,7 @@ async function readSkillsFromDir(skillsDir) {
       const disabled = skillName.endsWith('.disabled')
       const baseName = disabled ? skillName.slice(0, -'.disabled'.length) : skillName
       const skillMdPath = join(skillsDir, skillName, 'SKILL.md')
+      const fullPath = join(skillsDir, skillName).replace(/\\/g, '/')
       try {
         const raw = await readFile(skillMdPath, 'utf8')
         const { data, content } = parseFrontmatter(raw)
@@ -132,7 +133,8 @@ async function readSkillsFromDir(skillsDir) {
           tags: Array.isArray(data.tags) ? data.tags : [],
           dirName: skillName,
           disabled,
-          hasBody: content.trim().length > 0
+          hasBody: content.trim().length > 0,
+          fullPath
         })
       } catch {
         // 没有 SKILL.md 的目录，仅以目录名呈现
@@ -144,7 +146,8 @@ async function readSkillsFromDir(skillsDir) {
           tags: [],
           dirName: skillName,
           disabled,
-          hasBody: false
+          hasBody: false,
+          fullPath: join(skillsDir, skillName).replace(/\\/g, '/')
         })
       }
     }
@@ -211,7 +214,7 @@ export function apply(ctx) {
         const skillsDir = resolveSkillsDir()
         if (!skillsDir) { sendJson(res, 400, { success: false, error: 'invalid workspace path' }); return }
         const skills = await readSkillsFromDir(skillsDir)
-        sendJson(res, 200, { success: true, skills })
+        sendJson(res, 200, { success: true, skills, skillsPath: skillsDir.replace(/\\/g, '/') })
       } catch (error) {
         sendJson(res, 500, { success: false, error: error.message })
       }
