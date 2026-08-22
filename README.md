@@ -1,6 +1,8 @@
 # dsh-skill-manager
 
-DSH 设置界面中的**技能管理器**插件。在设置页新增【技能】入口，可视化管理全局与项目级 Skill（克隆自 [deepseek-harness](https://github.com/deepseek-ai/harness) 的 `SKILL.md` 目录结构）。
+DSH 设置界面中的**技能管理器**插件。在设置页新增【技能】入口，可视化管理全局与项目级 Skill（基于 deepseek-harness 的 `SKILL.md` 目录结构）。
+
+![截图](assets/screenshot.png)
 
 ## 功能
 
@@ -13,6 +15,46 @@ DSH 设置界面中的**技能管理器**插件。在设置页新增【技能】
 - **启用 / 禁用**：通过重命名目录加 `.disabled` 后缀实现（DSH 自动忽略，真正失效）
 - 全局目录：`~/.dsh/skills/`；项目目录：`<workspace>/.dsh/skills/`
 
+## 安装
+
+### 从 GitHub 安装（推荐）
+
+```
+dsh plugin add https://github.com/KeyboardPrince/dsh-skill-manager
+```
+
+> 提示：git 源安装会执行仓库的 `prepare` 脚本；pnpm ≥10 可能需要你授权 `allowBuilds`。
+
+### 从本地目录安装
+
+```bash
+# 克隆仓库
+git clone https://github.com/KeyboardPrince/dsh-skill-manager.git
+# 安装到指定 profile
+dsh plugin --profile web add ./dsh-skill-manager
+```
+
+### 从 npm registry 安装（如已发布）
+
+```
+dsh plugin --profile web add dsh-skill-manager@latest
+```
+
+若插件以其他包名发布，替换为实际包名即可。
+
+## 卸载
+
+```bash
+# 从当前 profile 移除插件
+dsh plugin --profile web remove dsh-skill-manager
+
+# 如需彻底删除已写入的指令文件（可选）
+rm ~/.dsh/Agents.md
+rm <workspace>/.dsh/Agents.md
+```
+
+卸载插件不会自动删除你已保存的 `Agents.md` 文件，避免误删自定义指令。
+
 ## 文件结构
 
 ```
@@ -22,6 +64,8 @@ dsh-skill-manager/
 ├── index.js              # Host half：API 路由与文件系统操作
 ├── client/
 │   └── client.js         # Client half：React UI 组件
+├── assets/
+│   └── screenshot.png    # 截图
 └── README.md
 ```
 
@@ -36,12 +80,6 @@ dsh-skill-manager/
 | POST | `/skill/api/delete` | 删除技能目录 |
 | POST | `/skill/api/toggle` | 启用 / 禁用（加 / 去 `.disabled` 后缀） |
 | GET | `/skill/api/detail?scope=&ws=&id=` | 读取技能完整内容 |
-
-## 安装
-
-```sh
-dsh plugin --profile <your-profile> add ./dsh-skill-manager
-```
 
 ## 技术说明
 

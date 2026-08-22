@@ -8,6 +8,7 @@
     "index.js",
     "client",
     "cordis.patch.yml",
+    "assets",
     "README.md"
   ],
   "keywords": [
