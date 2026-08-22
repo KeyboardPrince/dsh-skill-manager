@@ -2,7 +2,7 @@
 
 DSH 设置界面中的**技能管理器**插件。在设置页新增【技能】入口，可视化管理全局与项目级 Skill（基于 deepseek-harness 的 `SKILL.md` 目录结构）。
 
-![截图](assets/screenshot.png)
+![截图](assets/screenshot-v2.png)
 
 ## 功能
 
